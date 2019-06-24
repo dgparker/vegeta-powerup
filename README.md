@@ -6,7 +6,8 @@ Charge up Vegeta load tests using postman
 
 ## Example usage
 ```
-targets, err := powerup.Absorb(collPath, envPath, nil)
+func main() {
+	targets, err := powerup.Absorb("collPath", "envPath", nil)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -26,4 +27,5 @@ targets, err := powerup.Absorb(collPath, envPath, nil)
 	metrics.Close()
 
 	fmt.Printf("99th percentile: %s\n", metrics.Latencies.P99)
-  ```
+}
+```
