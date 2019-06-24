@@ -1,0 +1,18 @@
+# github.com/influxdata/tdigest v0.0.0-20181121200506-bf2b5ad3c0a9
+github.com/influxdata/tdigest
+# github.com/mailru/easyjson v0.0.0-20190620125010-da37f6c1e481
+github.com/mailru/easyjson/jlexer
+github.com/mailru/easyjson/jwriter
+github.com/mailru/easyjson/buffer
+# github.com/tsenart/vegeta v12.3.0+incompatible
+github.com/tsenart/vegeta/lib
+# golang.org/x/net v0.0.0-20190620200207-3b0461eec859
+golang.org/x/net/http2
+golang.org/x/net/http/httpguts
+golang.org/x/net/http2/hpack
+golang.org/x/net/idna
+# golang.org/x/text v0.3.0
+golang.org/x/text/secure/bidirule
+golang.org/x/text/unicode/bidi
+golang.org/x/text/unicode/norm
+golang.org/x/text/transform
