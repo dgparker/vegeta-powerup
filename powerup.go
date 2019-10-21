@@ -1,6 +1,7 @@
 package powerup
 
 import (
+	"bytes"
 	"encoding/json"
 	"io/ioutil"
 	"log"
@@ -114,17 +115,7 @@ func (ki *Ki) transform() ([]vegeta.Target, error) {
 	startTime := time.Now()
 	ki.logger.Println("beginning transformation...")
 
-	targets := []vegeta.Target{}
-	for _, v := range ki.coll.Items {
-		tgt := vegeta.Target{}
-
-		tgt.Method = v.Request.Method
-		tgt.URL = v.Request.URL.Raw
-		tgt.Header = v.Request.WrapHeaders()
-		tgt.Body = v.Request.Body.Bytes()
-
-		targets = append(targets, tgt)
-	}
+	targets := getTargets(ki.coll.Items)
 
 	if ENVLoaded {
 		targets = ki.setEnvironment(targets)
@@ -134,14 +125,31 @@ func (ki *Ki) transform() ([]vegeta.Target, error) {
 	return targets, nil
 }
 
+func getTargets(items []postman.CollectionItem) []vegeta.Target {
+	targets := []vegeta.Target{}
+	for _, v := range items {
+		if v.Items != nil {
+			targets = append(targets, getTargets(v.Items)...)
+		} else {
+			tgt := vegeta.Target{}
+
+			tgt.Method = v.Request.Method
+			tgt.URL = v.Request.URL.Raw
+			tgt.Header = v.Request.WrapHeaders()
+			tgt.Body = v.Request.Body.Bytes()
+
+			targets = append(targets, tgt)
+		}
+	}
+	return targets
+}
+
 func (ki *Ki) setEnvironment(targets []vegeta.Target) []vegeta.Target {
 	newTargets := []vegeta.Target{}
 	for _, target := range targets {
 		target.URL = ki.replaceURL(target.URL)
 		target.Header = ki.replaceHeader(target.Header)
-
-		// add body here?
-
+		target.Body = ki.replaceBody(target.Body)
 		newTargets = append(newTargets, target)
 	}
 	return newTargets
@@ -163,12 +171,26 @@ func (ki *Ki) replaceHeader(h http.Header) http.Header {
 		values := []string{}
 		for _, hv := range hvs {
 			keysRaw := re1.FindAllString(hv, -1)
-			for _, key := range keysRaw {
-				newValue := strings.Replace(hv, key, ki.envMap[re2.ReplaceAllString(key, "")], -1)
-				values = append(values, newValue)
+			if len(keysRaw) == 0 {
+				values = append(values, hv)
+			} else {
+				for _, key := range keysRaw {
+					newValue := strings.Replace(hv, key, ki.envMap[re2.ReplaceAllString(key, "")], -1)
+					values = append(values, newValue)
+				}
 			}
 		}
 		headers[hk] = values
 	}
 	return headers
+}
+
+func (ki *Ki) replaceBody(body []byte) []byte {
+	if re1.Match(body) {
+		keysRaw := re1.FindAll(body, -1)
+		for _, key := range keysRaw {
+			body = bytes.Replace(body, key, []byte(ki.envMap[string(re2.ReplaceAll(key, nil))]), -1)
+		}
+	}
+	return body
 }
