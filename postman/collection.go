@@ -22,6 +22,7 @@ type CollectionItem struct {
 	Name      string                  `json:"name"`
 	Request   CollectionItemRequest   `json:"request"`
 	Responses CollectionItemResponses `json:"response"`
+	Items     []CollectionItem        `json:"item"`
 }
 
 // CollectionItemRequest ...
@@ -41,7 +42,9 @@ func (r *CollectionItemRequest) WrapHeaders() http.Header {
 
 	hdr := http.Header{}
 	for _, v := range r.Header {
-		hdr.Add(v.Key, v.Value)
+		if !v.Disabled {
+			hdr.Add(v.Key, v.Value)
+		}
 	}
 	return hdr
 }
