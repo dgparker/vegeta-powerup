@@ -26,6 +26,7 @@ var (
 	re3       = regexp.MustCompile(`{{VEGETA}}`)
 	seed      = rand.NewSource(time.Now().UnixNano())
 	rando     = rand.New(seed)
+	phpay     = "PHPAY"
 )
 
 // Ki contains the methods necessary for maniupulating a postman
@@ -34,6 +35,7 @@ type Ki struct {
 	logger *log.Logger
 	coll   *postman.Collection
 	env    *postman.Environment
+	api    string
 	envMap map[string]string
 }
 
@@ -68,7 +70,7 @@ func NewPostmanTargeter(tgts ...vegeta.Target) vegeta.Targeter {
 }
 
 // Absorb loads the postman collection for later processing
-func Absorb(collPath string, envPath string, logger *log.Logger) ([]vegeta.Target, error) {
+func Absorb(collPath string, envPath string, api string, logger *log.Logger) ([]vegeta.Target, error) {
 	if logger == nil {
 		logger = log.New(os.Stdout, "vegeta-postman: ", log.LstdFlags)
 	}
@@ -115,7 +117,7 @@ func (ki *Ki) transform() ([]vegeta.Target, error) {
 	startTime := time.Now()
 	ki.logger.Println("beginning transformation...")
 
-	targets := getTargets(ki.coll.Items)
+	targets := ki.getTargets(ki.coll.Items)
 
 	if ENVLoaded {
 		targets = ki.setEnvironment(targets)
@@ -125,20 +127,21 @@ func (ki *Ki) transform() ([]vegeta.Target, error) {
 	return targets, nil
 }
 
-func getTargets(items []postman.CollectionItem) []vegeta.Target {
+func (ki *Ki) getTargets(items []postman.CollectionItem) []vegeta.Target {
 	targets := []vegeta.Target{}
 	for _, v := range items {
 		if v.Items != nil {
-			targets = append(targets, getTargets(v.Items)...)
+			targets = append(targets, ki.getTargets(v.Items)...)
 		} else {
-			tgt := vegeta.Target{}
-
-			tgt.Method = v.Request.Method
-			tgt.URL = v.Request.URL.Raw
-			tgt.Header = v.Request.WrapHeaders()
-			tgt.Body = v.Request.Body.Bytes()
-
-			targets = append(targets, tgt)
+			if (ki.api != phpay && !strings.Contains(v.Request.URL.Raw, "phpay")) ||
+				(ki.api == phpay && strings.Contains(v.Request.URL.Raw, "phpay")) {
+				tgt := vegeta.Target{}
+				tgt.Method = v.Request.Method
+				tgt.URL = v.Request.URL.Raw
+				tgt.Header = v.Request.WrapHeaders()
+				tgt.Body = v.Request.Body.Bytes()
+				targets = append(targets, tgt)
+			}
 		}
 	}
 	return targets
