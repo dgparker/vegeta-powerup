@@ -23,7 +23,7 @@
             "mode": "auto",
             "program": "${workspaceFolder}/cmd/wing-chun-test/main.go",
             "env": {
-                "COLLECTION_PATH": "${workspaceFolder}/tests/wing-chun.postman_collection.json",
+                "COLLECTION_PATH": "${workspaceFolder}/tests/wing-chun-simple.postman_collection.json",
                 "ENV_PATH": "${workspaceFolder}/tests/wing-chun.postman_environment.json"
             },
             "args": []

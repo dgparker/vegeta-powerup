@@ -80,7 +80,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"post\": \"this is a unique post\"\n}",
+					"raw": "{\n\t\"post\": \"{{VEGETA_POSTPING}}\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"

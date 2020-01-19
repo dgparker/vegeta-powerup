@@ -1,0 +1,54 @@
+{
+	"info": {
+		"_postman_id": "02752a6d-609e-4101-9019-bc1e95cee074",
+		"name": "wing-chun-simple",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "POST /ping - simple",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Test",
+						"value": "{{VEGETA_TEST}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"post\": \"{{VEGETA_POSTPING}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{uri}}/ping?name={{VEGETA_NAME}}",
+					"host": [
+						"{{uri}}"
+					],
+					"path": [
+						"ping"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "{{VEGETA_NAME}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

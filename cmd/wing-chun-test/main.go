@@ -37,5 +37,13 @@ func main() {
 type randomizer struct{}
 
 func (r *randomizer) Random(v string) string {
+	switch v {
+	case "{{VEGETA_NAME}}":
+		return "namee"
+	case "{{VEGETA_TEST}}":
+		return "test"
+	case "{{VEGETA_POSTPING}}":
+		return "POSTY"
+	}
 	return v
 }

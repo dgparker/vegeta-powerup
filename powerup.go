@@ -48,7 +48,7 @@ type Randomizer interface {
 // Targets
 // POSTMAN OPTIONS -
 // for postman collections POST and PUT methods if the collection body contains
-// a reference to var {{VEGETA_}} regex ("{{VEGETA_}}") the var will be
+// a reference to var {{VEGETA_}} regex ("{{VEGETA_(.*?)}}") the var will be
 // replaced with a randomized value using the consumers Randomizer implementation
 func NewPostmanTargeter(randomizer Randomizer, tgts ...vegeta.Target) vegeta.Targeter {
 	i := int64(-1)
@@ -58,29 +58,70 @@ func NewPostmanTargeter(randomizer Randomizer, tgts ...vegeta.Target) vegeta.Tar
 		}
 		*tgt = tgts[atomic.AddInt64(&i, 1)%int64(len(tgts))]
 
-		if re3.MatchString(tgt.URL) {
-			keysRaw := re1.FindAllString(tgt.URL, -1)
+		// check for randmozier in url
+		tgt.URL = randomizeString(tgt.URL, randomizer)
+		// check for randomizer in body
+		tgt.Body = randomizeBytes(tgt.Body, randomizer)
+		// check for randomizer in headers
+		tgt.Header = randomizeHeaders(tgt.Header, randomizer)
+
+		return nil
+	}
+}
+
+func randomizeString(in string, randomizer Randomizer) string {
+	if !re3.MatchString(in) {
+		return in
+	}
+
+	var out string
+	keysRaw := re3.FindAllString(in, -1)
+	for _, key := range keysRaw {
+		out = strings.Replace(in, key, randomizer.Random(key), -1)
+	}
+
+	return out
+}
+
+func randomizeBytes(in []byte, randomizer Randomizer) []byte {
+	log.Println(string(in))
+	if !re3.Match(in) {
+		return in
+	}
+	var out []byte
+	keysRaw := re3.FindAll(in, -1)
+	for _, key := range keysRaw {
+		out = bytes.Replace(in, key, []byte(randomizer.Random(string(key))), -1)
+	}
+
+	return out
+}
+
+func randomizeHeaders(in http.Header, randomizer Randomizer) http.Header {
+	if len(in) == 0 {
+		return in
+	}
+
+	out := http.Header{}
+	for k, v := range in {
+		var headerKey, headerValue string
+		if re3.MatchString(k) {
+			keysRaw := re3.FindAllString(k, -1)
 			for _, key := range keysRaw {
-				tgt.URL = strings.Replace(tgt.URL, key, randomizer.Random(key), -1)
+				headerKey = strings.Replace(k, key, randomizer.Random(key), -1)
 			}
 		}
 
-		// if tgt.Method == "POST" || tgt.Method == "PUT" {
-		// 	unique := rando.Int()
-		// 	if len(tgt.Body) == 0 {
-		// 		return nil
-		// 	}
-
-		// 	tgt.Body = []byte(re3.ReplaceAllString(string(tgt.Body), strconv.Itoa(unique)))
-		// }
-
-		// probably needs to go here
-		// if re3.MatchString(string(key)) {
-		// 	body = bytes.Replace(body, key, []byte(ki.Randomizer.Random(string(key))), -1)
-		// 	continue
-		// }
-		return nil
+		if len(v) > 0 && re3.MatchString(v[0]) {
+			keysRaw := re3.FindAllString(v[0], -1)
+			for _, key := range keysRaw {
+				headerValue = strings.Replace(v[0], key, randomizer.Random(key), -1)
+			}
+		}
+		out.Add(headerKey, headerValue)
 	}
+
+	return out
 }
 
 // Absorb loads the postman collection for later processing
@@ -162,7 +203,11 @@ func (ki *Ki) parseSegment(value string) string {
 	if re1.MatchString(value) {
 		keysRaw := re1.FindAllString(value, -1)
 		for _, key := range keysRaw {
-			value = strings.Replace(value, key, ki.envMap[re2.ReplaceAllString(key, "")], -1)
+			result := ki.envMap[re2.ReplaceAllString(key, "")]
+			if result == "" {
+				continue
+			}
+			value = strings.Replace(value, key, result, -1)
 		}
 	}
 	return value
@@ -232,7 +277,11 @@ func (ki *Ki) parseBody(body []byte) []byte {
 	if re1.Match(body) {
 		keysRaw := re1.FindAll(body, -1)
 		for _, key := range keysRaw {
-			body = bytes.Replace(body, key, []byte(ki.envMap[string(re2.ReplaceAll(key, nil))]), -1)
+			result := ki.envMap[string(re2.ReplaceAll(key, nil))]
+			if result == "" {
+				continue
+			}
+			body = bytes.Replace(body, key, []byte(result), -1)
 		}
 	}
 	return body
