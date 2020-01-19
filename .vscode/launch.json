@@ -1,0 +1,32 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "powerup-test",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/cmd/powerup-test/main.go",
+            "env": {
+                "COLLECTION_PATH": "${workspaceFolder}/tests/wing-chun.postman_collection.json",
+                "ENV_PATH": "${workspaceFolder}/tests/wing-chun.postman_environment.json"
+            },
+            "args": []
+        },
+        {
+            "name": "wing-chun-test",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/cmd/wing-chun-test/main.go",
+            "env": {
+                "COLLECTION_PATH": "${workspaceFolder}/tests/wing-chun.postman_collection.json",
+                "ENV_PATH": "${workspaceFolder}/tests/wing-chun.postman_environment.json"
+            },
+            "args": []
+        }
+    ]
+}

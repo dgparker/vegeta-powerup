@@ -1,14 +1,17 @@
 package postman
 
-// Environment represents a postman environment
+import "time"
+
 type Environment struct {
-	ID     string   `json:"id"`
-	Name   string   `json:"name"`
-	Values []*Value `json:"values"`
+	ID                   string    `json:"id"`
+	Name                 string    `json:"name"`
+	Values               []Values  `json:"values"`
+	PostmanVariableScope string    `json:"_postman_variable_scope"`
+	PostmanExportedAt    time.Time `json:"_postman_exported_at"`
+	PostmanExportedUsing string    `json:"_postman_exported_using"`
 }
 
-// Value represents a postman environment value
-type Value struct {
+type Values struct {
 	Key     string `json:"key"`
 	Value   string `json:"value"`
 	Enabled bool   `json:"enabled"`

@@ -2,40 +2,86 @@ package postman
 
 import (
 	"net/http"
-	"strings"
 )
 
-// Collection represents a postman collection
 type Collection struct {
-	Info  CollectionInfo   `json:"info"`
-	Items []CollectionItem `json:"item"`
+	Info                    Info                    `json:"info"`
+	Items                   []Item                  `json:"item"`
+	ProtocolProfileBehavior ProtocolProfileBehavior `json:"protocolProfileBehavior"`
 }
 
-// CollectionInfo ...
-type CollectionInfo struct {
-	Name        string `json:"name"`
-	Description string `json:"description"`
+type Info struct {
+	PostmanID string `json:"_postman_id"`
+	Name      string `json:"name"`
+	Schema    string `json:"schema"`
 }
 
-// CollectionItem ...
-type CollectionItem struct {
-	Name      string                  `json:"name"`
-	Request   CollectionItemRequest   `json:"request"`
-	Responses CollectionItemResponses `json:"response"`
-	Items     []CollectionItem        `json:"item"`
+type AuthItem struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+	Type  string `json:"type"`
 }
 
-// CollectionItemRequest ...
-type CollectionItemRequest struct {
-	URL         CollectionItemRequestURL `json:"url"`
-	Method      string                   `json:"method"`
-	Header      []RequestHeader          `json:"header"`
-	Body        RequestBody              `json:"body"`
-	Description string                   `json:"description"`
+type Auth struct {
+	Type   string     `json:"type"`
+	APIKey []AuthItem `json:"apikey"`
+	Bearer []AuthItem `json:"bearer"`
+	Basic  []AuthItem `json:"basic"`
+}
+
+type Header struct {
+	Key      string `json:"key"`
+	Value    string `json:"value"`
+	Type     string `json:"type"`
+	Name     string `json:"name,omitempty"`
+	Disabled bool   `json:"disabled"`
+}
+
+type Raw struct {
+	Language string `json:"language"`
+}
+
+type Options struct {
+	Raw Raw `json:"raw"`
+}
+
+type Body struct {
+	Mode    string  `json:"mode"`
+	Raw     string  `json:"raw"`
+	Options Options `json:"options"`
+}
+
+type Query struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
+type URL struct {
+	Raw   string   `json:"raw"`
+	Host  []string `json:"host"`
+	Path  []string `json:"path"`
+	Query []Query  `json:"query"`
+}
+
+type Request struct {
+	Auth   Auth     `json:"auth"`
+	Method string   `json:"method"`
+	Header []Header `json:"header"`
+	Body   Body     `json:"body"`
+	URL    URL      `json:"url"`
+}
+
+type Item struct {
+	Name     string        `json:"name"`
+	Request  Request       `json:"request"`
+	Response []interface{} `json:"response"`
+	Items    []Item        `json:"item"`
+}
+type ProtocolProfileBehavior struct {
 }
 
 // WrapHeaders transforms the postman header values to a go http.Header
-func (r *CollectionItemRequest) WrapHeaders() http.Header {
+func (r *Request) WrapHeaders() http.Header {
 	if len(r.Header) == 0 {
 		return http.Header{}
 	}
@@ -49,64 +95,12 @@ func (r *CollectionItemRequest) WrapHeaders() http.Header {
 	return hdr
 }
 
-// CollectionItemRequestURL ...
-type CollectionItemRequestURL struct {
-	Raw   string   `json:"raw"`
-	Host  []string `json:"host"`
-	Path  []string `json:"path"`
-	Query []Query  `json:"query"`
-}
-
-// Query ...
-type Query struct {
-	Key   string `json:"key"`
-	Value string `json:"value"`
-}
-
-// CollectionItemResponse ...
-type CollectionItemResponse struct {
-	ID     string           `json:"id"`
-	Name   string           `json:"name"`
-	Status string           `json:"status"`
-	Code   int              `json:"code"`
-	Header []ResponseHeader `json:"header"`
-	Body   string           `json:"body"`
-}
-
-// CollectionItemResponses ...
-type CollectionItemResponses []CollectionItemResponse
-
-// RequestHeader ...
-type RequestHeader struct {
-	Key         string `json:"key"`
-	Value       string `json:"value"`
-	Description string `json:"description"`
-	Disabled    bool   `json:"disabled"`
-}
-
-// RequestBody ...
-type RequestBody struct {
-	Mode string `json:"mode"`
-	Raw  string `json:"raw"`
-}
-
 // Bytes returns the byte representation of the json string
 // if empty returns []byte{}
-func (r RequestBody) Bytes() []byte {
+func (r Body) Bytes() []byte {
 	if r.Raw == "" {
 		return []byte{}
 	}
 
-	// remove postman formatting
-	r.Raw = strings.ReplaceAll(r.Raw, "\t", "")
-	r.Raw = strings.ReplaceAll(r.Raw, "\n", "")
 	return []byte(r.Raw)
-}
-
-// ResponseHeader ...
-type ResponseHeader struct {
-	Key         string `json:"key"`
-	Value       string `json:"value"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
 }

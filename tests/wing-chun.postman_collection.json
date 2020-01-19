@@ -1,0 +1,325 @@
+{
+	"info": {
+		"_postman_id": "ef9656b3-1779-41a9-bfa5-d0641e59995d",
+		"name": "wing-chun",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GET /ping - simple",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{uri}}/ping?name={{name}}",
+					"host": [
+						"{{uri}}"
+					],
+					"path": [
+						"ping"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "{{name}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT /ping - simple",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "{{content-type}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"put\": \"this is a put {{VEGETA}}\"\n}"
+				},
+				"url": {
+					"raw": "{{uri}}/ping",
+					"host": [
+						"{{uri}}"
+					],
+					"path": [
+						"ping"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST /ping - simple",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"post\": \"this is a unique post\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{uri}}/ping",
+					"host": [
+						"{{uri}}"
+					],
+					"path": [
+						"ping"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE /ping - simple",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "{{content-type}}"
+					}
+				],
+				"url": {
+					"raw": "{{uri}}/ping",
+					"host": [
+						"{{uri}}"
+					],
+					"path": [
+						"ping"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /ping - auth apiKey | query | header",
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "in",
+							"value": "query",
+							"type": "string"
+						},
+						{
+							"key": "value",
+							"value": "secret",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "apikey",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "test-header",
+						"type": "text",
+						"value": "value"
+					}
+				],
+				"url": {
+					"raw": "{{uri}}/ping?param={{query}}",
+					"host": [
+						"{{uri}}"
+					],
+					"path": [
+						"ping"
+					],
+					"query": [
+						{
+							"key": "param",
+							"value": "{{query}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /ping - auth Bearer Token",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "awefawefawef",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "test-header",
+						"type": "text",
+						"value": "value"
+					}
+				],
+				"url": {
+					"raw": "{{uri}}/ping?param={{query}}",
+					"host": [
+						"{{uri}}"
+					],
+					"path": [
+						"ping"
+					],
+					"query": [
+						{
+							"key": "param",
+							"value": "{{query}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST /ping - form-data",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "testKey",
+							"value": "testValue",
+							"type": "text"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{uri}}/ping",
+					"host": [
+						"{{uri}}"
+					],
+					"path": [
+						"ping"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST /ping - xxx-www-form-urlencoded",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "testKey",
+							"value": "testValue",
+							"type": "text"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{uri}}/ping",
+					"host": [
+						"{{uri}}"
+					],
+					"path": [
+						"ping"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /Ping - basic auth",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "password",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "username",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{uri}}/ping",
+					"host": [
+						"{{uri}}"
+					],
+					"path": [
+						"ping"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

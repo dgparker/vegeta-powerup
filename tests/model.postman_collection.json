@@ -1,0 +1,82 @@
+{
+	"info": {
+		"_postman_id": "36a78c15-c4f1-4204-9aa1-ea681be06e7c",
+		"name": "model",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "POST /ping - everything",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "password",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "username",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "testHeader",
+						"value": "{{test_env}}",
+						"type": "text"
+					},
+					{
+						"key": "testHeader2",
+						"value": "testValue",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"key\": \"value\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{uri}}/ping?testQueryParam=testValue&tesQueryParam={{test_env}}&{{test_env}}=testValue",
+					"host": [
+						"{{uri}}"
+					],
+					"path": [
+						"ping"
+					],
+					"query": [
+						{
+							"key": "testQueryParam",
+							"value": "testValue"
+						},
+						{
+							"key": "tesQueryParam",
+							"value": "{{test_env}}"
+						},
+						{
+							"key": "{{test_env}}",
+							"value": "testValue"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
