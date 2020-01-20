@@ -84,7 +84,6 @@ func randomizeString(in string, randomizer Randomizer) string {
 }
 
 func randomizeBytes(in []byte, randomizer Randomizer) []byte {
-	log.Println(string(in))
 	if !re3.Match(in) {
 		return in
 	}
