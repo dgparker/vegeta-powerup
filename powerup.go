@@ -56,14 +56,15 @@ func NewPostmanTargeter(randomizer Randomizer, tgts ...vegeta.Target) vegeta.Tar
 		if tgt == nil {
 			return vegeta.ErrNilTarget
 		}
-		*tgt = tgts[atomic.AddInt64(&i, 1)%int64(len(tgts))]
 
-		// check for randmozier in url
+		// // check for randmozier in url
 		tgt.URL = randomizeString(tgt.URL, randomizer)
-		// check for randomizer in body
+		// // check for randomizer in body
 		tgt.Body = randomizeBytes(tgt.Body, randomizer)
-		// check for randomizer in headers
+		// // check for randomizer in headers
 		tgt.Header = randomizeHeaders(tgt.Header, randomizer)
+
+		*tgt = tgts[atomic.AddInt64(&i, 1)%int64(len(tgts))]
 
 		return nil
 	}
