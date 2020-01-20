@@ -37,19 +37,19 @@ type Ki struct {
 	envMap map[string]string
 }
 
-// Randomizer defines an interface that takes a string as a parameter
-// then returns a randomized value for the string.
-// URL value can be used to generate endpoint specific randomizations
+// Randomizer - implementations should expect the {{VEGETA_...}} env reference
+// as the arguement to Random(). Random will only be called on attacks the contain a reference
+// of {{VEGETA_...}} you can use this value to determine which random values to generate.
 type Randomizer interface {
 	Random(string) string
 }
 
 // NewPostmanTargeter returns a vegeta.Targeter which round-robins over the passed
 // Targets
-// POSTMAN OPTIONS -
-// for postman collections POST and PUT methods if the collection body contains
-// a reference to var {{VEGETA_}} regex ("{{VEGETA_(.*?)}}") the var will be
-// replaced with a randomized value using the consumers Randomizer implementation
+// for postman - if the collection target contains a reference to var {{VEGETA_}} regex ("{{VEGETA_(.*?)}}")
+// the var will be replaced with a randomized value using the consumers Randomizer implementation
+// implmentations that don't require the use of a randomizer should implement a Randomizer that returns
+// the original string argument.
 func NewPostmanTargeter(randomizer Randomizer, tgts ...vegeta.Target) vegeta.Targeter {
 	i := int64(-1)
 	return func(tgt *vegeta.Target) error {
@@ -124,7 +124,9 @@ func randomizeHeaders(in http.Header, randomizer Randomizer) http.Header {
 	return out
 }
 
-// Absorb loads the postman collection for later processing
+// Absorb parses the postman collection and environment and returns a slice of vegeta Targets.
+// A collection path is required, an environment path is optional. logger is generally for debugging purposes only
+// and passing nil acceptable.
 func Absorb(collPath string, envPath string, logger *log.Logger) ([]vegeta.Target, error) {
 	if logger == nil {
 		logger = log.New(os.Stdout, "vegeta-postman: ", log.LstdFlags)
